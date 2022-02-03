@@ -28,7 +28,7 @@ func (r *repository) Create(payroll Payroll) (Payroll, error) {
 func (r *repository) FindAll() ([]Payroll, error) {
 	var payrolls []Payroll
 
-	err := r.db.Debug().Order("id asc").Find(&payrolls).Error
+	err := r.db.Debug().Order("id desc").Find(&payrolls).Error
 
 	return payrolls, err
 }
