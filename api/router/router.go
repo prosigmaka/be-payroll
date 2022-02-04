@@ -3,6 +3,7 @@ package router
 import (
 	// "fmt"
 	"be-payroll/api/middleware"
+	"be-payroll/internal/approval_panel"
 	"be-payroll/internal/payroll_panel"
 
 	// "log"
@@ -22,6 +23,11 @@ func Route(db *gorm.DB) *gin.Engine {
 	payrollService := payroll_panel.NewService(payrollRepo)
 	payrollHandler := payroll_panel.NewPayrollHandler(payrollService)
 
+	// Approval Panel
+	approvalRepo := approval_panel.NewRepository(db)
+	approvalService := approval_panel.NewService(approvalRepo)
+	approvalHandler := approval_panel.NewApprovalHandler(approvalService)
+
 	v1 := router.Group("/v1")
 	{
 		admin := v1.Group("/api/admin")
@@ -34,6 +40,7 @@ func Route(db *gorm.DB) *gin.Engine {
 			// // admin.DELETE("/payroll-panel/", payrollHandler.DeleteAllList)
 			// admin.GET("/payroll-panel/query", payrollHandler.QueryList)
 
+			// Payroll Panel Routes API
 			admin.GET("/payroll-panel", middleware.CORSMiddleware(), payrollHandler.GetAllList)
 			admin.GET("/payroll-panel/detail/:id", middleware.CORSMiddleware(), payrollHandler.GetListById)
 			admin.POST("/payroll-panel/post", middleware.CORSMiddleware(), payrollHandler.CreateList)
@@ -41,6 +48,15 @@ func Route(db *gorm.DB) *gin.Engine {
 			admin.DELETE("/payroll-panel/remove/:id", middleware.CORSMiddleware(), payrollHandler.DeleteList)
 			// admin.DELETE("/payroll-panel/", middleware.CORSMiddleware(), payrollHandler.DeleteAllList)
 			admin.GET("/payroll-panel/query", middleware.CORSMiddleware(), payrollHandler.QueryList)
+
+			// Approval Routes API
+			admin.GET("/approval", middleware.CORSMiddleware(), approvalHandler.GetAllList)
+			admin.GET("/approval/detail/:id", middleware.CORSMiddleware(), approvalHandler.GetListById)
+			admin.POST("/approval/post", middleware.CORSMiddleware(), approvalHandler.CreateList)
+			admin.PUT("/approval/update/:id", middleware.CORSMiddleware(), approvalHandler.UpdateList)
+			admin.DELETE("/approval/remove/:id", middleware.CORSMiddleware(), approvalHandler.DeleteList)
+			// admin.DELETE("/approval/", middleware.CORSMiddleware(), approvalHandler.DeleteAllList)
+			admin.GET("/approval/query", middleware.CORSMiddleware(), approvalHandler.QueryList)
 		}
 	}
 

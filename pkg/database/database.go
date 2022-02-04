@@ -51,5 +51,26 @@ func InitDB() (*gorm.DB, error) {
 
 	// payrollService.Create(payrollRequest)
 
+	// db.AutoMigrate(&approval_panel.Approval{})
+
+	// // Repository Approval
+	// approvalRepository := approval_panel.NewRepository(db)
+	// approvalService := approval_panel.NewService(approvalRepository)
+
+	// approvalRequest := approval_panel.CreateApprovalRequest{
+	// 	Id_Request:      "1001",
+	// 	Id_Employee:     "1001",
+	// 	Full_Name:       "Karyawan A",
+	// 	Leave_Type:      "Sick",
+	// 	Job_Title:       "Full Stack Developer",
+	// 	Division:        "Developer",
+	// 	Description:     "Sick Leave",
+	// 	Address:         "Jakarta",
+	// 	Start_Date:      "2021-12-31",
+	// 	End_Date:        "2022-01-01",
+	// 	Approval_Status: "Pending",
+	// }
+	// approvalService.Create(approvalRequest)
+
 	return db, nil
 }
