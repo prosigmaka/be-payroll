@@ -78,7 +78,7 @@ func (h *approvalHandler) GetListById(c *gin.Context) {
 	})
 }
 
-func (h *approvalHandler) QueryList(c *gin.Context) {
+func (h *approvalHandler) Query(c *gin.Context) {
 	title := c.Query("title")
 
 	c.JSON(http.StatusOK, gin.H{
@@ -88,7 +88,7 @@ func (h *approvalHandler) QueryList(c *gin.Context) {
 	})
 }
 
-func (h *approvalHandler) CreateList(c *gin.Context) {
+func (h *approvalHandler) Create(c *gin.Context) {
 	var createApprovalRequest CreateApprovalRequest
 	err := c.ShouldBindJSON(&createApprovalRequest)
 	if err != nil {
@@ -120,7 +120,39 @@ func (h *approvalHandler) CreateList(c *gin.Context) {
 	})
 }
 
-func (h *approvalHandler) UpdateList(c *gin.Context) {
+// Go Routine for Form Create List Approval
+func (h *approvalHandler) CreateList(c *gin.Context) {
+	var createList []CreateApprovalRequest
+	err := c.ShouldBindJSON(&createList)
+	if err != nil {
+		errorMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", e.Field(), e.ActualTag())
+			errorMessages = append(errorMessages, errorMessage)
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errorMessages,
+		})
+
+		return
+	}
+
+	approvals, err := h.approvalService.CreateList(createList)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": approvals,
+	})
+}
+
+func (h *approvalHandler) Update(c *gin.Context) {
 	var updateApprovalRequest UpdateApprovalRequest
 
 	idString := c.Param("id")
@@ -158,7 +190,7 @@ func (h *approvalHandler) UpdateList(c *gin.Context) {
 	})
 }
 
-func (h *approvalHandler) DeleteList(c *gin.Context) {
+func (h *approvalHandler) Delete(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
 

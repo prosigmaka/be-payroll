@@ -52,11 +52,14 @@ func Route(db *gorm.DB) *gin.Engine {
 			// Approval Routes API
 			admin.GET("/approval", middleware.CORSMiddleware(), approvalHandler.GetAllList)
 			admin.GET("/approval/detail/:id", middleware.CORSMiddleware(), approvalHandler.GetListById)
-			admin.POST("/approval/post", middleware.CORSMiddleware(), approvalHandler.CreateList)
-			admin.PUT("/approval/update/:id", middleware.CORSMiddleware(), approvalHandler.UpdateList)
-			admin.DELETE("/approval/remove/:id", middleware.CORSMiddleware(), approvalHandler.DeleteList)
+			admin.POST("/approval/post", middleware.CORSMiddleware(), approvalHandler.Create)
+			admin.PUT("/approval/update/:id", middleware.CORSMiddleware(), approvalHandler.Update)
+			admin.DELETE("/approval/remove/:id", middleware.CORSMiddleware(), approvalHandler.Delete)
 			// admin.DELETE("/approval/", middleware.CORSMiddleware(), approvalHandler.DeleteAllList)
-			admin.GET("/approval/query", middleware.CORSMiddleware(), approvalHandler.QueryList)
+			admin.GET("/approval/query", middleware.CORSMiddleware(), approvalHandler.Query)
+
+			// Implementing Go Routine for Approval
+			admin.POST("/approval/post/list", middleware.CORSMiddleware(), approvalHandler.CreateList)
 		}
 	}
 

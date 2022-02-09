@@ -9,6 +9,7 @@ type Service interface {
 	CountAnnualLeave() ([]Approval, error)
 	CountLeavePermission() ([]Approval, error)
 	CountSickLeave() ([]Approval, error)
+	CreateList(CreateApprovalRequest []CreateApprovalRequest) ([]Approval, error)
 }
 
 type service struct {
@@ -102,3 +103,44 @@ func (s *service) CountSickLeave() ([]Approval, error) {
 
 	return approvals, err
 }
+
+// Go Routine for Form Create List Approval
+func addList(start int, end int, createList []CreateApprovalRequest, channel chan Approval, s *service) {
+	for i := start; i < end; i++ {
+		approvalList, _ := s.Create(createList[i])
+		channel <- approvalList
+	}
+}
+
+func (s *service) CreateList(createApprovalRequest []CreateApprovalRequest) ([]Approval, error) {
+	n := len(createApprovalRequest) / 2
+	channel := make(chan Approval)
+
+	go addList(0, n, createApprovalRequest, channel, s)
+
+	go addList(n, len(createApprovalRequest), createApprovalRequest, channel, s)
+
+	var approvalList []Approval
+	for i := 0; i < len(createApprovalRequest); i++ {
+		approvalCreateList := <-channel
+		newList := Approval{
+			ID:              approvalCreateList.ID,
+			Id_Request:      approvalCreateList.Id_Request,
+			Id_Employee:     approvalCreateList.Id_Employee,
+			Full_Name:       approvalCreateList.Full_Name,
+			Leave_Type:      approvalCreateList.Leave_Type,
+			Job_Title:       approvalCreateList.Job_Title,
+			Division:        approvalCreateList.Division,
+			Description:     approvalCreateList.Description,
+			Address:         approvalCreateList.Address,
+			Start_Date:      approvalCreateList.Start_Date,
+			End_Date:        approvalCreateList.End_Date,
+			Approval_Status: approvalCreateList.Approval_Status,
+		}
+		approvalList = append(approvalList, newList)
+	}
+
+	return approvalList, nil
+}
+
+// Go Routine for Form Create List Approval
