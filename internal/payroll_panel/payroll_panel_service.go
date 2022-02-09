@@ -7,6 +7,7 @@ type Service interface {
 	Update(ID int, UpdatePayrollRequest UpdatePayrollRequest) (Payroll, error)
 	Delete(ID int) (Payroll, error)
 	// DeleteAll() ([]Payroll, error)
+	CreateList(CreatePayrollRequest []CreatePayrollRequest) ([]Payroll, error)
 }
 
 type service struct {
@@ -96,3 +97,44 @@ func (s *service) Delete(ID int) (Payroll, error) {
 
 // 	return payrolls, err
 // }
+
+// Go Routine for Form Create List Payroll
+func addList(start int, end int, createList []CreatePayrollRequest, channel chan Payroll, s *service) {
+	for i := start; i < end; i++ {
+		payrollList, _ := s.Create(createList[i])
+		channel <- payrollList
+	}
+}
+
+func (s *service) CreateList(createPayrollRequest []CreatePayrollRequest) ([]Payroll, error) {
+	n := len(createPayrollRequest) / 2
+	channel := make(chan Payroll)
+
+	go addList(0, n, createPayrollRequest, channel, s)
+	go addList(n, len(createPayrollRequest), createPayrollRequest, channel, s)
+
+	var payrollList []Payroll
+	for i := 0; i < len(createPayrollRequest); i++ {
+		payrollCreateList := <-channel
+
+		newList := Payroll{
+			ID:             payrollCreateList.ID,
+			Id_Payment:     payrollCreateList.Id_Payment,
+			Id_Employee:    payrollCreateList.Id_Employee,
+			Full_Name:      payrollCreateList.Full_Name,
+			Job_Title:      payrollCreateList.Job_Title,
+			Payment_Period: payrollCreateList.Payment_Period,
+			Payment_Date:   payrollCreateList.Payment_Date,
+			Payment_Status: payrollCreateList.Payment_Status,
+			Basic_Salary:   payrollCreateList.Basic_Salary,
+			Bpjs:           payrollCreateList.Bpjs,
+			Tax:            payrollCreateList.Tax,
+			Total_Salary:   payrollCreateList.Total_Salary,
+		}
+		payrollList = append(payrollList, newList)
+	}
+
+	return payrollList, nil
+}
+
+// End Go Routine for Form Create List Approval

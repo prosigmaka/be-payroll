@@ -88,7 +88,7 @@ func (h *payrollHandler) QueryList(c *gin.Context) {
 	})
 }
 
-func (h *payrollHandler) CreateList(c *gin.Context) {
+func (h *payrollHandler) Create(c *gin.Context) {
 	var createPayrollRequest CreatePayrollRequest
 	err := c.ShouldBindJSON(&createPayrollRequest)
 	if err != nil {
@@ -120,7 +120,39 @@ func (h *payrollHandler) CreateList(c *gin.Context) {
 	})
 }
 
-func (h *payrollHandler) UpdateList(c *gin.Context) {
+// Go Routine for Form Create List Payroll
+func (h *payrollHandler) CreateList(c *gin.Context) {
+	var createList []CreatePayrollRequest
+	err := c.ShouldBindJSON(&createList)
+	if err != nil {
+		errorMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", e.Field(), e.ActualTag())
+			errorMessages = append(errorMessages, errorMessage)
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errorMessages,
+		})
+
+		return
+	}
+
+	payrolls, err := h.payrollService.CreateList(createList)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": payrolls,
+	})
+}
+
+func (h *payrollHandler) Update(c *gin.Context) {
 	var updatePayrollRequest UpdatePayrollRequest
 
 	idString := c.Param("id")
@@ -158,7 +190,7 @@ func (h *payrollHandler) UpdateList(c *gin.Context) {
 	})
 }
 
-func (h *payrollHandler) DeleteList(c *gin.Context) {
+func (h *payrollHandler) Delete(c *gin.Context) {
 	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
 
