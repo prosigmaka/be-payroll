@@ -43,11 +43,14 @@ func Route(db *gorm.DB) *gin.Engine {
 			// Payroll Panel Routes API
 			admin.GET("/payroll-panel", middleware.CORSMiddleware(), payrollHandler.GetAllList)
 			admin.GET("/payroll-panel/detail/:id", middleware.CORSMiddleware(), payrollHandler.GetListById)
-			admin.POST("/payroll-panel/post", middleware.CORSMiddleware(), payrollHandler.CreateList)
-			admin.PUT("/payroll-panel/update/:id", middleware.CORSMiddleware(), payrollHandler.UpdateList)
-			admin.DELETE("/payroll-panel/remove/:id", middleware.CORSMiddleware(), payrollHandler.DeleteList)
+			admin.POST("/payroll-panel/post", middleware.CORSMiddleware(), payrollHandler.Create)
+			admin.PUT("/payroll-panel/update/:id", middleware.CORSMiddleware(), payrollHandler.Update)
+			admin.DELETE("/payroll-panel/remove/:id", middleware.CORSMiddleware(), payrollHandler.Delete)
 			// admin.DELETE("/payroll-panel/", middleware.CORSMiddleware(), payrollHandler.DeleteAllList)
 			admin.GET("/payroll-panel/query", middleware.CORSMiddleware(), payrollHandler.QueryList)
+
+			// Implementing Go Routine for Payroll Panel
+			admin.POST("/payroll-panel/post/list", middleware.CORSMiddleware(), payrollHandler.CreateList)
 
 			// Approval Routes API
 			admin.GET("/approval", middleware.CORSMiddleware(), approvalHandler.GetAllList)
