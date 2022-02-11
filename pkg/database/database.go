@@ -9,10 +9,11 @@ import (
 )
 
 const (
-	// DB_HOST = "localhost" // run in local machine
 	// DB_HOST = "payroll-postgres" // run in docker
-	DB_HOST     = "172.20.0.2" // run in docker
-	DB_PORT     = "5432"
+	//DB_HOST     = "172.20.0.2" // run in docker
+	//DB_PORT     = "5432"
+	DB_HOST     = "localhost"
+	DB_PORT     = "5332"
 	DB_USER     = "postgres"
 	DB_PASS     = "admin"
 	DB_DATABASE = "payroll"
