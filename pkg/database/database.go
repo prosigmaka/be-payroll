@@ -9,17 +9,30 @@ import (
 )
 
 const (
-	DB_HOST = "localhost"
-	DB_PORT = "5432"
-	DB_USER = "postgres"
-	DB_PASS = "admin"
-	DB_NAME = "payroll"
+	// DB_HOST = "localhost" // run in local machine
+	// DB_HOST = "payroll-postgres" // run in docker
+	DB_HOST     = "172.20.0.2" // run in docker
+	DB_PORT     = "5432"
+	DB_USER     = "postgres"
+	DB_PASS     = "admin"
+	DB_DATABASE = "payroll"
 )
 
 // var DB = &gorm.DB{}
 
 func InitDB() (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT)
+	// err := godotenv.Load("../.env")
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
+
+	// DB_HOST := os.Getenv("DB_HOST")
+	// DB_PORT := os.Getenv("DB_PORT")
+	// DB_USER := os.Getenv("DB_USER")
+	// DB_PASS := os.Getenv("DB_PASS")
+	// DB_DATABASE := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", DB_HOST, DB_USER, DB_PASS, DB_DATABASE, DB_PORT)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
