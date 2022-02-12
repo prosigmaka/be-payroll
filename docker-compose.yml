@@ -4,7 +4,7 @@ services:
     container_name: payroll-backend
     build: .
     ports: 
-      - 8081:8080 
+      - 8081:8081
     restart: on-failure
     volumes:
       - api:/usr/src/app/
@@ -26,7 +26,7 @@ services:
       - database_postgres:/var/lib/postgresql/data
     networks:
       default:
-        ipv4_address: 172.20.0.2 #make sure it's run on the 172.20.0.2
+        ipv4_address: 172.20.0.2
 
 volumes:
   api:
@@ -36,5 +36,5 @@ volumes:
 # default network payroll-network
 networks:
   default :
-    external:
-      name: payroll-network
+    external: true
+    name: payroll-network
