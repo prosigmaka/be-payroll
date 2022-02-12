@@ -26,27 +26,14 @@ services:
       - database_postgres:/var/lib/postgresql/data
     networks:
       default:
-        ipv4_address: 172.20.0.2
-    
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   container_name: pgadmin_container
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-  #   depends_on:
-  #     - fullstack-postgres
-  #   ports:
-  #     - "5050:80"
-  #   networks:
-  #     - fullstack
-  #   restart: unless-stopped
+        ipv4_address: 172.20.0.2 #make sure it's run on the 172.20.0.2
 
 volumes:
   api:
   database_postgres:                  
 
 # Networks to be created to facilitate communication between containers
+# default network payroll-network
 networks:
   default :
     external:
